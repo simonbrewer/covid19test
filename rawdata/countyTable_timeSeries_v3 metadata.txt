@@ -1,0 +1,26 @@
+FIPS				5-digit identifier of county
+county				County name
+sFIPS				2-digit identifier of state
+state				state name
+date				date 
+Tot_pop				Total county population (static)
+Pop_o_60			county number of people over 60 years old (static) 	
+Pop_m				county number of males (static)
+Pop_white			county number of whites (static)
+Pop_black			county number of blacks (static)
+Pop_AmIndAlNat		county number of American Indian and Alaska Natives (static)
+Pop_asia			county number of asians (static)
+Pop_NaHaPaIs		county number of Native Hawaiian or other Pacific Islander (static)
+Income				county median household income (static)	
+Bachelor			county number of Bachelor's degree or higher (static)
+caseNew				county number of new cases on given day (daily)
+daysSinceC			number of days since first case was observed in county (can be negative) (daily)
+deathNew			county number of new deaths on given day (daily) 
+daysSinceD			number of days since first death was observed in county (can be negative) (daily)
+hospitals			county number of hospitals (static)
+nursing				county number of nursing (static)
+univeristies		county number of universities (static)
+hospRate			state-level new hospitalizations per 100,000 population (https://covidtracking.com/data/download) (daily)  	
+cTest				county number of tests administered (pulled from county health department websites) (daily)
+Province_State		State (full name)
+sTest				state number of tests administered (from JHU Github page)
