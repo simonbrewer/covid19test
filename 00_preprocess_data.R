@@ -7,6 +7,7 @@ set.seed(12345)
 library(dplyr)
 library(skimr)
 library(caret)
+library(recipes)
 
 
 ## -----------------------------------------------------------------------------
