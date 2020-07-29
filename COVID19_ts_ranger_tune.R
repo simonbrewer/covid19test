@@ -30,7 +30,7 @@ f1 <- test_rate ~ pState_popn + lpPop_o_60 + lpPop_m + lpPop_white +
 f1 <- test_rate ~ pState_popn + lpPop_o_60 + lpPop_m + lpPop_white + 
   # lpPop_black + lpPop_AmIndAlNat + lpPop_asia + lpPop_NaHaPaIs +
   lIncome + lpBachelor + phospitals + pnursing + puniversities +
-  pcaseNew + daysSinceC + pdeathNew + daysSinceD # + hospRate
+  pcaseNew + daysSinceC + pdeathNew + daysSinceD + hospRate
 
 ## Full model (3)
 # f1 <- test_rate ~ pState_popn + lpPop_o_60 + lpPop_m + lpPop_white + 
