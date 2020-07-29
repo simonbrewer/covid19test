@@ -13,12 +13,15 @@ library(vip)
 library(pdp)
 
 
-load("../../rawdata/covid19.RData")
+load("./covid19.RData")
+
+dat <- dat %>%
+  filter(!is.na(pcaseNew_lag))
 
 ## -------------------------------------------------------------------------------------------
 f1 <- test_rate ~ lpState_popn + lpPop_o_60 + lpPop_m + lpPop_white + 
   # lpPop_black + lpPop_AmIndAlNat + lpPop_asia + lpPop_NaHaPaIs + 
-  lIncome + lpBachelor + phospitals + pnursing + puniversities + 
+  # lIncome + lpBachelor + phospitals + pnursing + puniversities + 
   pcaseNew + daysSinceC + pdeathNew + daysSinceD + hospRate
 
 
@@ -52,11 +55,12 @@ base_results <- data.frame(states,
 
 
 ## -------------------------------------------------------------------------------------------
-parGrid = expand.grid(mtry = 8, splitrule = "variance", min.node.size = 5)
+parGrid = expand.grid(mtry = 5, splitrule = "variance", min.node.size = 5)
 
 
 ## -------------------------------------------------------------------------------------------
 for (i in 1:nstates) {
+  print(states[i])
   state_id = which(dat$state == states[i])
   training = dat[-state_id,]
   testing =  dat[ state_id,]
