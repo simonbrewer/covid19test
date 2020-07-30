@@ -1,4 +1,4 @@
-## Updated preprocessing to use reported state totals
+## New preprocessing script that just uses true test rates
 ## ----message = FALSE----------------------------------------------------------
 set.seed(12345)
 library(dplyr)
@@ -13,6 +13,7 @@ library(zoo)
 dat <- read.csv("./rawdata/countyTable_timeSeries_v3.csv")
 skim(dat)
 
+state_popn <- read.csv("./rawdata/state_popn_2019.csv")
 
 ## -----------------------------------------------------------------------------
 ## Remove anything with missing hospital values
@@ -29,6 +30,11 @@ dat <- dat %>%
 ## Remove the IL zero tests
 dat <- dat %>%
   filter(!(state == "IL" & cTest == 0))
+
+## -----------------------------------------------------------------------------
+## Drop the 15/16 May from Florida
+dat <- dat %>%
+  filter(!(state == "FL" & date %in% c("2020-05-15", "2020-05-16")))
 
 
 ## -----------------------------------------------------------------------------
@@ -58,22 +64,24 @@ state_test <- dat %>%
 state_test <- state_test %>% 
   filter(state_tests > 0)
 
+## -----------------------------------------------------------------------------
+## Merge census based state population values
+state_test <- merge(state_test, state_popn, by.x = "state", by.y = "Abbr")
+state_test <- state_test %>%
+  select(-State, -sFIPS)
+
 
 ## -----------------------------------------------------------------------------
 ## Merge state test numbers back to main data frame
 dat <- merge(dat, state_test, by = c("state", "date"))
 
 ## Filter by state tests = 0
-dat <- dat %>%
-  filter(sTest > 0)
+# dat <- dat %>%
+#   filter(sTest > 0)
 
 ## -----------------------------------------------------------------------------
 ## Calculate daily test rate
-dat$test_rate <- dat$dTest / dat$sTest
-
-## Filter by test_rates >= 0 and <= 1
-dat <- dat %>%
-  filter(test_rate >= 0 & test_rate <= 1)
+dat$test_rate <- (dat$dTest / dat$Tot_pop) * 1e3
 
 ## -----------------------------------------------------------------------------
 ## Calculate other rate data (per 100,000)
@@ -154,5 +162,5 @@ for (i in 1:nfips) {
 #                    horizons = 1, groups = "FIPS",
 #                    dates = dat$ddate)
 
-save(dat, file = "covid19_2.RData")
+save(dat, file = "covid19.RData")
 
