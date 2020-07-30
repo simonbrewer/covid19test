@@ -15,17 +15,19 @@ library(pdp)
 
 
 load("./covid19.RData")
+dat <- dat %>%
+  filter(!is.na(pcaseNew_lag))
 
 # dat <- dat[sample(nrow(dat), 5000), ]
 dat$ltest_rate <- log(dat$test_rate+1e-5)
 ## -------------------------------------------------------------------------------------------
 f1 <- test_rate ~ lpState_popn + lpPop_o_60 + lpPop_m + lpPop_white + 
-  # lpPop_black + lpPop_AmIndAlNat + lpPop_asia + lpPop_NaHaPaIs +
+  lpPop_black + lpPop_AmIndAlNat + lpPop_asia + lpPop_NaHaPaIs +
   lIncome + lpBachelor + phospitals + pnursing + puniversities +
-  pcaseNew + daysSinceC + pdeathNew + daysSinceD # + hospRate
+  pcaseNew_lag + daysSinceC + pdeathNew_lag + daysSinceD # + hospRate
 
-f1 <- test_rate ~ pnursing + 
-  pcaseNew + daysSinceC + pdeathNew + daysSinceD + hospRate
+f1 <- test_rate ~ pnursing +
+  pcaseNew_lag + daysSinceC + pdeathNew_lag + daysSinceD + hospRate
 
 ## -------------------------------------------------------------------------------------------
 inTrain <- createDataPartition(
@@ -68,7 +70,7 @@ modFit <- train(
   ## increase parameter set
   tuneGrid = parGrid,
   ## added:
-  # importance = 'permutation',
+  importance = 'permutation',
   trControl = ctrl
 )
 modFit
@@ -85,13 +87,13 @@ ggplot(modFit)
 ## -------------------------------------------------------------------------------------------
 pred_test <- predict(modFit, newdata = testing)
 # mod_results[mod_id, 2:4] <- postResample(pred = pred_test, obs = testing$test_rate)
-postResample(pred = pred_test, obs = testing$test_rate)
+print(postResample(pred = pred_test, obs = testing$test_rate))
 
 
 ## -------------------------------------------------------------------------------------------
 testing$baseline <- testing$pState_popn
 testing$baseline <- ((testing$state_tests * testing$pState_popn) / testing$Tot_pop) * 1e3
-postResample(pred <- testing$baseline, obs = testing$test_rate)
+print(postResample(pred <- testing$baseline, obs = testing$test_rate))
 
 
 ## -------------------------------------------------------------------------------------------
