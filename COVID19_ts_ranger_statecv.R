@@ -24,6 +24,8 @@ f1 <- test_rate ~ lpState_popn + lpPop_o_60 + lpPop_m + lpPop_white +
   # lIncome + lpBachelor + phospitals + pnursing + puniversities + 
   pcaseNew + daysSinceC + pdeathNew + daysSinceD + hospRate
 
+f1 <- test_rate ~ pnursing +
+  pcaseNew + daysSinceC + pdeathNew + daysSinceD + hospRate
 
 ## -------------------------------------------------------------------------------------------
 states = unique(sort(dat$state))
@@ -55,7 +57,7 @@ base_results <- data.frame(states,
 
 
 ## -------------------------------------------------------------------------------------------
-parGrid = expand.grid(mtry = 5, splitrule = "variance", min.node.size = 5)
+parGrid = expand.grid(mtry = 3, splitrule = "variance", min.node.size = 4)
 
 
 ## -------------------------------------------------------------------------------------------
@@ -66,7 +68,8 @@ for (i in 1:nstates) {
   testing =  dat[ state_id,]
   
   ## Get baseline
-  testing$baseline = testing$pState_popn
+  # testing$baseline = testing$pState_popn
+  testing$baseline <- ((testing$state_tests * testing$pState_popn) / testing$Tot_pop) * 1e3
   
   modFit <- train(
     f1,
