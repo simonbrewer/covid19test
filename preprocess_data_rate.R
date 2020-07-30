@@ -86,7 +86,7 @@ dat$test_rate <- (dat$dTest / dat$Tot_pop) * 1e3
 ## -----------------------------------------------------------------------------
 ## Calculate other rate data (per 100,000)
 ## Population data
-dat$pState_popn <- dat$Tot_pop / dat$state_popn
+dat$pState_popn <- dat$Tot_pop / dat$Popn
 dat$pPop_o_60 <- dat$Pop_o_60 / dat$Tot_pop * 1e5
 dat$pPop_m <- dat$Pop_m / dat$Tot_pop * 1e5
 dat$pPop_white <- dat$Pop_white / dat$Tot_pop * 1e5
