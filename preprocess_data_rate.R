@@ -128,7 +128,7 @@ dat$lpBachelor <- log(dat$pBachelor)
 
 ## -----------------------------------------------------------------------------
 dat$ddate <- ymd(dat$date)
-dat$wday <- wday(dat$ddate, week_start = 1)
+dat$wday <- wday(dat$ddate, week_start = 1, label = TRUE)
 
 ## -----------------------------------------------------------------------------
 ## Calculate lagged means (previous 7 days) for cases and deaths
