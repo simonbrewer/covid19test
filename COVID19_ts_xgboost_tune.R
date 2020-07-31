@@ -24,11 +24,11 @@ dat$ltest_rate <- log(dat$test_rate+1e-5)
 ## -------------------------------------------------------------------------------------------
 f1 <- test_rate ~ lpState_popn + lpPop_o_60 + lpPop_m + lpPop_white + 
   lpPop_black + lpPop_AmIndAlNat + lpPop_asia + lpPop_NaHaPaIs +
-  lIncome + lpBachelor + phospitals + pnursing + puniversities +
-  pcaseNew_lag + daysSinceC + pdeathNew_lag + daysSinceD # + hospRate
+  # lIncome + lpBachelor + phospitals + pnursing + puniversities +
+  pcaseNew_lag + daysSinceC + pdeathNew_lag + daysSinceD + hospRate + wday
 
-f1 <- test_rate ~ pnursing +
-  pcaseNew_lag + daysSinceC + pdeathNew_lag + daysSinceD + hospRate
+# f1 <- test_rate ~ pnursing +
+#   pcaseNew_lag + daysSinceC + pdeathNew_lag + daysSinceD + hospRate
 
 ## -----------------------------------------------------------------------------
 inTrain <- createDataPartition(
@@ -91,7 +91,7 @@ ctrl <- trainControl(method = "cv",
 # parGrid <- expand.grid(
 #   nrounds = seq(50, 1000, by = 50),
 #   eta = 0.01,
-#   max_depth = 5,
+#   max_depth = 4,
 #   gamma = 0,
 #   colsample_bytree = 1,
 #   min_child_weight = c(1, 2, 3, 4),
@@ -123,7 +123,7 @@ ctrl <- trainControl(method = "cv",
 # parGrid <- expand.grid(
 #   nrounds = seq(50, 1000, by = 50),
 #   eta = 0.01,
-#   max_depth = 5,
+#   max_depth = 4,
 #   gamma = 0,
 #   colsample_bytree = c(0.4, 0.6, 0.8, 1.0),
 #   min_child_weight = 1,
@@ -156,11 +156,11 @@ ctrl <- trainControl(method = "cv",
 # parGrid <- expand.grid(
 #   nrounds = seq(50, 1000, by = 50),
 #   eta = 0.01,
-#   max_depth = 5,
+#   max_depth = 4,
 #   gamma = c(0, 0.05, 0.1, 0.5, 0.7, 0.9, 1.0),
 #   colsample_bytree = 0.6,
 #   min_child_weight = 1,
-#   subsample = 0.75
+#   subsample = 1.0
 #   )
 # 
 # 
@@ -182,18 +182,18 @@ ctrl <- trainControl(method = "cv",
 # 
 # ## -----------------------------------------------------------------------------
 # ggplot(modFit)
-# 
-# 
-## -----------------------------------------------------------------------------
+
+
+# -----------------------------------------------------------------------------
 ## Round 5: learning rate
 parGrid <- expand.grid(
   nrounds = seq(100, 10000, by = 100), 
   eta = c(0.01, 0.015, 0.025, 0.05, 0.1), 
-  max_depth = 5, 
-  gamma = 0.1, 
+  max_depth = 4, 
+  gamma = 1, 
   colsample_bytree = 0.6, 
-  min_child_weight = 5,
-  subsample = 0.75
+  min_child_weight = 1,
+  subsample = 1.0
   )
 
 

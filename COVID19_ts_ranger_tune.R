@@ -8,6 +8,7 @@ library(dplyr)
 library(skimr)
 library(caret)
 library(gbm) ## For importance scores
+library(randomForest)
 library(ranger)
 library(ggpubr)
 library(vip)
@@ -22,12 +23,12 @@ dat <- dat %>%
 dat$ltest_rate <- log(dat$test_rate+1e-5)
 ## -------------------------------------------------------------------------------------------
 f1 <- test_rate ~ lpState_popn + lpPop_o_60 + lpPop_m + lpPop_white + 
-  lpPop_black + lpPop_AmIndAlNat + lpPop_asia + lpPop_NaHaPaIs +
+  # lpPop_black + lpPop_AmIndAlNat + lpPop_asia + lpPop_NaHaPaIs +
   lIncome + lpBachelor + phospitals + pnursing + puniversities +
-  pcaseNew_lag + daysSinceC + pdeathNew_lag + daysSinceD # + hospRate
+  pcaseNew + daysSinceC + pdeathNew + daysSinceD + hospRate + wday
 
-f1 <- test_rate ~ pnursing +
-  pcaseNew_lag + daysSinceC + pdeathNew_lag + daysSinceD + hospRate
+# f1 <- test_rate ~ pnursing + wday +
+#   pcaseNew + daysSinceC + pdeathNew + daysSinceD + hospRate
 
 ## -------------------------------------------------------------------------------------------
 inTrain <- createDataPartition(
@@ -42,6 +43,10 @@ inTrain <- createDataPartition(
 training <- dat[ inTrain,]
 testing  <- dat[-inTrain,]
 
+# modFit <- randomForest(f1, dat = training, do.trace = TRUE)
+# plot(modFit)
+# varImpPlot(modFit)
+# partialPlot(modFit, pred.data = training, x.var = "wday")
 
 ## -------------------------------------------------------------------------------------------
 # ctrl <- trainControl(method = "repeatedcv", 
