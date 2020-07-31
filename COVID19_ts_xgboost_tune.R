@@ -191,7 +191,8 @@ ggplot(modFit)
 ## Round 5: learning rate
 parGrid <- expand.grid(
   nrounds = seq(100, 10000, by = 100), 
-  eta = c(0.01, 0.015, 0.025, 0.05, 0.1), 
+  # eta = c(0.01, 0.015, 0.025, 0.05, 0.1), 
+  eta = 0.05,
   max_depth = 2, 
   gamma = 0.5, 
   colsample_bytree = 0.8, 

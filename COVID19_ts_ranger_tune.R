@@ -28,11 +28,11 @@ dat$ltest_rate <- log(dat$test_rate+1e-5)
 f1 <- ltest_rate ~ lpState_popn + lpPop_o_60 + lpPop_m + lpPop_white + 
   lpPop_black + lpPop_AmIndAlNat + lpPop_asia + lpPop_NaHaPaIs +
   lIncome + lpBachelor + phospitals + pnursing + puniversities +
-  pcaseNew_lag + daysSinceC + pdeathNew_lag + daysSinceD + hospRate + wday + sTest
+  pcaseNew_lag + daysSinceC + pdeathNew_lag + daysSinceD + hospRate + wday # + sTest
 
 # f1 <- test_rate ~ pnursing + wday +
-#   pcaseNew + daysSinceC + pdeathNew + daysSinceD + hospRate
-
+#   pcaseNew_lag + daysSinceC + pdeathNew_lag + daysSinceD + hospRate
+# 
 ## -------------------------------------------------------------------------------------------
 inTrain <- createDataPartition(
   y = dat$test_rate,
