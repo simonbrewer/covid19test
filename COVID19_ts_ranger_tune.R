@@ -25,10 +25,10 @@ dat <- dat %>%
 # dat <- dat[sample(nrow(dat), 5000), ]
 dat$ltest_rate <- log(dat$test_rate+1e-5)
 ## -------------------------------------------------------------------------------------------
-f1 <- test_rate ~ lpState_popn + lpPop_o_60 + lpPop_m + lpPop_white + 
-  # lpPop_black + lpPop_AmIndAlNat + lpPop_asia + lpPop_NaHaPaIs +
+f1 <- ltest_rate ~ lpState_popn + lpPop_o_60 + lpPop_m + lpPop_white + 
+  lpPop_black + lpPop_AmIndAlNat + lpPop_asia + lpPop_NaHaPaIs +
   lIncome + lpBachelor + phospitals + pnursing + puniversities +
-rapcaseNew_lag + daysSinceC + pdeathNew + daysSinceD + hospRate + wday
+  pcaseNew_lag + daysSinceC + pdeathNew_lag + daysSinceD + hospRate + wday + sTest
 
 # f1 <- test_rate ~ pnursing + wday +
 #   pcaseNew + daysSinceC + pdeathNew + daysSinceD + hospRate
@@ -95,7 +95,7 @@ ggplot(modFit)
 ## -------------------------------------------------------------------------------------------
 pred_test <- predict(modFit, newdata = testing)
 # mod_results[mod_id, 2:4] <- postResample(pred = pred_test, obs = testing$test_rate)
-print(postResample(pred = pred_test, obs = testing$test_rate))
+print(postResample(pred = exp(pred_test), obs = testing$test_rate))
 
 
 ## -------------------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ print(postResample(pred <- testing$baseline, obs = testing$test_rate))
 
 ## -------------------------------------------------------------------------------------------
 mydf = data.frame(obs = rep(testing$test_rate, 2), 
-                  pred = c(testing$baseline, pred_test),
+                  pred = c(testing$baseline, exp(pred_test)),
                   type = rep(c("base", "pred"), each = length(testing$test_rate)))
 p1 = ggscatter(mydf, x = "obs", y = "pred", col = "type",
           main = paste0("COVID 19 testing (ranger, raw-scale)")) + 
