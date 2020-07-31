@@ -19,13 +19,16 @@ load("./covid19.RData")
 dat <- dat %>%
   filter(!is.na(pcaseNew_lag))
 
+dat <- dat %>%
+  filter(state %in% c("CT", "MI", "NY", "WA"))
+
 # dat <- dat[sample(nrow(dat), 5000), ]
 dat$ltest_rate <- log(dat$test_rate+1e-5)
 ## -------------------------------------------------------------------------------------------
 f1 <- test_rate ~ lpState_popn + lpPop_o_60 + lpPop_m + lpPop_white + 
   # lpPop_black + lpPop_AmIndAlNat + lpPop_asia + lpPop_NaHaPaIs +
   lIncome + lpBachelor + phospitals + pnursing + puniversities +
-  pcaseNew + daysSinceC + pdeathNew + daysSinceD + hospRate + wday
+rapcaseNew_lag + daysSinceC + pdeathNew + daysSinceD + hospRate + wday
 
 # f1 <- test_rate ~ pnursing + wday +
 #   pcaseNew + daysSinceC + pdeathNew + daysSinceD + hospRate
