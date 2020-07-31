@@ -13,7 +13,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r message = FALSE}
 ## ----message = FALSE----------------------------------------------------------
 set.seed(12345)
 library(dplyr)
@@ -31,6 +31,7 @@ dat$FIPS = as.factor(dat$FIPS)
 ```
 
 ## Test data
+
 ```{r}
 states = unique(dat$state)
 for (i in states) {
@@ -39,9 +40,14 @@ for (i in states) {
   p1 = dat %>% 
     filter(dat$state == i) %>%
     ggline(x = "date", y = "cTest", col = "FIPS",
-           main = paste("COVID tests", i),
+           main = paste("COVID tests (raw)", i),
            legend = "none")
-  print(p1)
+  p2 = dat %>% 
+    filter(dat$state == i) %>%
+    ggline(x = "date", y = "dTest", col = "FIPS",
+           main = paste("COVID tests (daily)", i),
+           legend = "none")
+  print(ggarrange(p1, p2))
 }
 ```
 }
