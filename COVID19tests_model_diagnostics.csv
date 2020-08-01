@@ -13,8 +13,8 @@ xgboost,0.0061,,xgboost,,,xgboost,,,xgboost,,,xgboost,,,xgboost,0.44
 ,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,
 State CV,,,State CV,,,State CV,,,State CV,,,State CV,,,State CV,
-Baseline,0.0088,,Baseline,0.79,,Baseline,0.79,,Baseline,,,Baseline,,,Baseline,
-RF (Full),0.0095,,RF (Full),,,RF (Full),,,RF (Full),,,RF (Full),,,RF (Full),
+Baseline,0.0088,,Baseline,0.79,,Baseline,0.79,,Baseline,,,Baseline,,,Baseline,0.91
+RF (Full),0.0095,,RF (Full),,,RF (Full),,,RF (Full),,,RF (Full),,,RF (Full),0.92
 RF (Simple),0.0092,,RF (Simple),1.05,,RF (Simple),1.05,,RF (Simple),,,RF (Simple),,,RF (Simple),
 xgboost,0.0092,,xgboost,,,xgboost,,,xgboost,,,xgboost,,,xgboost,
 xgboost (Simple),0.009,,xgboost (Simple),,,xgboost (Simple),,,xgboost (Simple),,,xgboost (Simple),,,xgboost (Simple),

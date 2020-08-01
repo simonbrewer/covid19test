@@ -46,10 +46,10 @@ inTrain <- createDataPartition(
 training <- dat[ inTrain,]
 testing  <- dat[-inTrain,]
 
-# modFit <- randomForest(f1, dat = training, do.trace = TRUE)
-# plot(modFit)
-# varImpPlot(modFit)
-# partialPlot(modFit, pred.data = training, x.var = "wday")
+modFit <- randomForest(f1, dat = training, do.trace = TRUE)
+plot(modFit)
+varImpPlot(modFit)
+partialPlot(modFit, pred.data = training, x.var = "wday")
 
 ## -------------------------------------------------------------------------------------------
 # ctrl <- trainControl(method = "repeatedcv", 
