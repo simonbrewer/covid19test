@@ -46,6 +46,14 @@ inTrain <- createDataPartition(
 training <- dat[ inTrain,]
 testing  <- dat[-inTrain,]
 
+## -----------------------------------------------------------------------------
+## Case weights
+ltr_hist <- hist(training$ltest_rate, plot = FALSE,
+                 seq(min(training$ltest_rate), max(training$ltest_rate), length.out = 100))
+wgt_vec <- 1 / ltr_hist$counts
+casewgt <- wgt_vec[cut(training$ltest_rate, include.lowest = TRUE,
+                       breaks = ltr_hist$breaks, labels = FALSE)]
+
 
 ## -----------------------------------------------------------------------------
 ctrl <- trainControl(method = "repeatedcv", 
@@ -57,146 +65,146 @@ ctrl <- trainControl(method = "cv",
                      allowParallel = TRUE,
                      verboseIter = TRUE)
 
-# ## -----------------------------------------------------------------------------
-# ## Round 1: general tuning
-# parGrid <- expand.grid(
-#   nrounds = seq(200, 1000, by = 50),
-#   eta = c(1e-4, 1e-3, 1e-2, 1e-1),
-#   max_depth = c(2, 3, 4, 5, 6),
-#   gamma = 0,
-#   colsample_bytree = 1,
-#   min_child_weight = 1,
-#   subsample = 1)
-# 
-# 
-# ## ----results='hide', message=FALSE--------------------------------------------
-# modFit <- train(
-#   f1,
-#   data = training,
-#   method = "xgbTree",
-#   ## Center and scale the predictors for the training
-#   ## set and all future samples.
-#   preProc = c("center", "scale"),
-#   ## increase parameter set
-#   tuneGrid = parGrid,
-#   ## added:
-#   trControl = ctrl
-# )
-# modFit
-# 
-# 
-# ## -----------------------------------------------------------------------------
-# ggplot(modFit)
-# 
-# 
-# ## -----------------------------------------------------------------------------
-# ## Round 2: child weight
-# parGrid <- expand.grid(
-#   nrounds = seq(50, 1000, by = 50),
-#   eta = 0.1,
-#   max_depth = 2,
-#   gamma = 0,
-#   colsample_bytree = 1,
-#   min_child_weight = c(1, 2, 3, 4),
-#   subsample = 1)
-# 
-# 
-# ## ----results='hide', message=FALSE--------------------------------------------
-# modFit <- train(
-#   f1,
-#   data = training,
-#   method = "xgbTree",
-#   ## Center and scale the predictors for the training
-#   ## set and all future samples.
-#   preProc = c("center", "scale"),
-#   ## increase parameter set
-#   tuneGrid = parGrid,
-#   ## added:
-#   trControl = ctrl
-# )
-# modFit
-# 
-# 
-# ## -----------------------------------------------------------------------------
-# ggplot(modFit)
-# 
-# 
-# ## -----------------------------------------------------------------------------
-# ## Round 3: row and column sampling
-# parGrid <- expand.grid(
-#   nrounds = seq(50, 1000, by = 50),
-#   eta = 0.1,
-#   max_depth = 2,
-#   gamma = 0,
-#   colsample_bytree = c(0.4, 0.6, 0.8, 1.0),
-#   min_child_weight = 4,
-#   subsample = c(0.5, 0.75, 1.0)
-#   )
-# 
-# 
-# ## ----results='hide', message=FALSE--------------------------------------------
-# modFit <- train(
-#   f1,
-#   data = training,
-#   method = "xgbTree",
-#   ## Center and scale the predictors for the training
-#   ## set and all future samples.
-#   preProc = c("center", "scale"),
-#   ## increase parameter set
-#   tuneGrid = parGrid,
-#   ## added:
-#   trControl = ctrl
-# )
-# modFit
-# 
-# 
-# ## -----------------------------------------------------------------------------
-# ggplot(modFit)
-# 
-# 
-# ## -----------------------------------------------------------------------------
-# ## Round 4: gamma
-# parGrid <- expand.grid(
-#   nrounds = seq(50, 1000, by = 50),
-#   eta = 0.1,
-#   max_depth = 2,
-#   gamma = c(0, 0.05, 0.1, 0.5, 0.7, 0.9, 1.0),
-#   colsample_bytree = 0.8,
-#   min_child_weight = 4,
-#   subsample = 1.0
-#   )
-# 
-# 
-# ## ----results='hide', message=FALSE--------------------------------------------
-# modFit <- train(
-#   f1,
-#   data = training,
-#   method = "xgbTree",
-#   ## Center and scale the predictors for the training
-#   ## set and all future samples.
-#   preProc = c("center", "scale"),
-#   ## increase parameter set
-#   tuneGrid = parGrid,
-#   ## added:
-#   trControl = ctrl
-# )
-# modFit
-# 
-# 
-# ## -----------------------------------------------------------------------------
-# ggplot(modFit)
-# 
-# 
-# -----------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
+## Round 1: general tuning
+parGrid <- expand.grid(
+  nrounds = seq(200, 1000, by = 50),
+  eta = c(1e-4, 1e-3, 1e-2, 1e-1),
+  max_depth = c(2, 3, 4, 5, 6),
+  gamma = 0,
+  colsample_bytree = 1,
+  min_child_weight = 1,
+  subsample = 1)
+
+
+## ----results='hide', message=FALSE--------------------------------------------
+modFit <- train(
+  f1,
+  data = training,
+  method = "xgbTree",
+  ## Center and scale the predictors for the training
+  ## set and all future samples.
+  preProc = c("center", "scale"),
+  ## increase parameter set
+  tuneGrid = parGrid,
+  ## added:
+  trControl = ctrl
+)
+modFit
+
+
+## -----------------------------------------------------------------------------
+ggplot(modFit)
+
+
+## -----------------------------------------------------------------------------
+## Round 2: child weight
+parGrid <- expand.grid(
+  nrounds = seq(50, 1000, by = 50),
+  eta = 0.1,
+  max_depth = 2,
+  gamma = 0,
+  colsample_bytree = 1,
+  min_child_weight = c(1, 2, 3, 4),
+  subsample = 1)
+
+
+## ----results='hide', message=FALSE--------------------------------------------
+modFit <- train(
+  f1,
+  data = training,
+  method = "xgbTree",
+  ## Center and scale the predictors for the training
+  ## set and all future samples.
+  preProc = c("center", "scale"),
+  ## increase parameter set
+  tuneGrid = parGrid,
+  ## added:
+  trControl = ctrl
+)
+modFit
+
+
+## -----------------------------------------------------------------------------
+ggplot(modFit)
+
+
+## -----------------------------------------------------------------------------
+## Round 3: row and column sampling
+parGrid <- expand.grid(
+  nrounds = seq(50, 1000, by = 50),
+  eta = 0.1,
+  max_depth = 2,
+  gamma = 0,
+  colsample_bytree = c(0.4, 0.6, 0.8, 1.0),
+  min_child_weight = 1,
+  subsample = c(0.5, 0.75, 1.0)
+  )
+
+
+## ----results='hide', message=FALSE--------------------------------------------
+modFit <- train(
+  f1,
+  data = training,
+  method = "xgbTree",
+  ## Center and scale the predictors for the training
+  ## set and all future samples.
+  preProc = c("center", "scale"),
+  ## increase parameter set
+  tuneGrid = parGrid,
+  ## added:
+  trControl = ctrl
+)
+modFit
+
+
+## -----------------------------------------------------------------------------
+ggplot(modFit)
+
+
+## -----------------------------------------------------------------------------
+## Round 4: gamma
+parGrid <- expand.grid(
+  nrounds = seq(50, 1000, by = 50),
+  eta = 0.1,
+  max_depth = 2,
+  gamma = c(0, 0.05, 0.1, 0.5, 0.7, 0.9, 1.0),
+  colsample_bytree = 0.6,
+  min_child_weight = 1,
+  subsample = 1.0
+  )
+
+
+## ----results='hide', message=FALSE--------------------------------------------
+modFit <- train(
+  f1,
+  data = training,
+  method = "xgbTree",
+  ## Center and scale the predictors for the training
+  ## set and all future samples.
+  preProc = c("center", "scale"),
+  ## increase parameter set
+  tuneGrid = parGrid,
+  ## added:
+  trControl = ctrl
+)
+modFit
+
+
+## -----------------------------------------------------------------------------
+ggplot(modFit)
+
+
+## -----------------------------------------------------------------------------
 ## Round 5: learning rate
 parGrid <- expand.grid(
   nrounds = seq(100, 10000, by = 100), 
   # eta = c(0.01, 0.015, 0.025, 0.05, 0.1), 
   eta = 0.05,
   max_depth = 2, 
-  gamma = 0.5, 
-  colsample_bytree = 0.8, 
-  min_child_weight = 4,
+  gamma = 0.1, 
+  colsample_bytree = 0.6, 
+  min_child_weight = 1,
   subsample = 1.0
   )
 
@@ -232,7 +240,7 @@ postResample(pred = exp(pred_test), obs = testing$test_rate)
 
 ## -------------------------------------------------------------------------------------------
 testing$baseline = testing$pState_popn
-testing$baseline <- ((testing$state_tests * testing$pState_popn) / testing$Tot_pop) * 1e3
+testing$baseline <- ((testing$sTest * testing$pState_popn) / testing$Tot_pop) * 1e3
 postResample(pred = testing$baseline, obs = testing$test_rate)
 
 

@@ -65,14 +65,20 @@ base_results <- data.frame(states,
 
 ## -------------------------------------------------------------------------------------------
 parGrid <- expand.grid(
-  nrounds = 1700, 
+  nrounds = 2200, 
   eta = 0.05, 
   max_depth = 2, 
-  gamma = 0, 
-  colsample_bytree = 0.8, 
-  min_child_weight = 4,
+  gamma = 0.1, 
+  colsample_bytree = 0.6, 
+  min_child_weight = 1,
   subsample = 1.0
 )
+
+ltr_hist <- hist(dat1$ltest_rate, plot = FALSE,
+                 seq(min(dat1$ltest_rate), max(dat1$ltest_rate), length.out = 100))
+wgt_vec <- 1 / ltr_hist$counts
+casewgt <- wgt_vec[cut(dat1$ltest_rate, include.lowest = TRUE,
+                         breaks = ltr_hist$breaks, labels = FALSE)]
 
 modFit <- train(
   f1,
@@ -83,6 +89,7 @@ modFit <- train(
   preProc = c("center", "scale"),
   ## increase parameter set
   tuneGrid = parGrid,
+  # weights = casewgt,
   ## added:
   # importance = 'permutation',
   trControl = ctrl)
@@ -98,7 +105,7 @@ for (i in 1:nstates) {
   
   ## Get baseline
   # testing$baseline = testing$pState_popn
-  testing$baseline <- ((testing$state_tests * testing$pState_popn) / testing$Tot_pop) * 1e3
+  testing$baseline <- ((testing$sTest * testing$pState_popn) / testing$Tot_pop) * 1e3
   
   ## Plot tuning results
   # ggplot(modFit)
