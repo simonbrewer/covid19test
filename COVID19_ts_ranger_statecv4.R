@@ -30,7 +30,7 @@ dat2 <- dat %>%
 f1 <- ltest_rate ~ lpState_popn + lpPop_o_60 + lpPop_m + lpPop_white + 
   lpPop_black + lpPop_AmIndAlNat + lpPop_asia + lpPop_NaHaPaIs +
   lIncome + lpBachelor + phospitals + pnursing + puniversities +
-  pcaseNew_lag + daysSinceC + pdeathNew_lag + daysSinceD + hospRate + wday + sTest + Tot_pop
+  pcaseNew_lag + daysSinceC + pdeathNew_lag + daysSinceD + hospRate + wday #+ sTest + Tot_pop
 
 # f1 <- test_rate ~ pnursing +
 #   pcaseNew + daysSinceC + pdeathNew + daysSinceD + hospRate
