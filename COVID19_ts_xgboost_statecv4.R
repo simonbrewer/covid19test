@@ -120,7 +120,7 @@ for (i in 1:nstates) {
   p1 = ggscatter(mydf, x = "obs", y = "pred", col = "type", 
             main = paste0("COVID 19 testing (",states[i],", raw-scale)")) + 
     geom_abline()
-  ggsave(file = paste0("./statecv/xgboost/covid_",states[i],"_ranger.png"), 
+  ggsave(file = paste0("./statecv/xgboost/covid_",states[i],"_xgboost.png"), 
          p1, device = "png")
   
   
