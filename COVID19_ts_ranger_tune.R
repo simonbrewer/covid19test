@@ -46,10 +46,10 @@ inTrain <- createDataPartition(
 training <- dat[ inTrain,]
 testing  <- dat[-inTrain,]
 
-modFit <- randomForest(f1, dat = training, do.trace = TRUE)
-plot(modFit)
-varImpPlot(modFit)
-partialPlot(modFit, pred.data = training, x.var = "wday")
+# modFit <- randomForest(f1, dat = training, do.trace = TRUE)
+# plot(modFit)
+# varImpPlot(modFit)
+# partialPlot(modFit, pred.data = training, x.var = "wday")
 
 ## -------------------------------------------------------------------------------------------
 # ctrl <- trainControl(method = "repeatedcv", 
@@ -67,6 +67,12 @@ parGrid = expand.grid(mtry = 2:6, splitrule = "variance", min.node.size = 4:8)
 # parGrid = expand.grid(mtry = 6, splitrule = "variance", min.node.size = 4)
 
 
+ltr_hist <- hist(training$ltest_rate, plot = FALSE,
+                 seq(min(training$ltest_rate), max(training$ltest_rate), length.out = 100))
+wgt_vec <- 1 / ltr_hist$counts
+casewgt <- wgt_vec[cut(training$ltest_rate, include.lowest = TRUE,
+                       breaks = ltr_hist$breaks, labels = FALSE)]
+
 ## ----results='hide', message=FALSE----------------------------------------------------------
 modFit <- train(
   f1,
@@ -78,6 +84,8 @@ modFit <- train(
   ## increase parameter set
   tuneGrid = parGrid,
   ## added:
+  num.trees = 250,
+  weights = casewgt,
   importance = 'permutation',
   trControl = ctrl
 )
@@ -100,7 +108,7 @@ print(postResample(pred = exp(pred_test), obs = testing$test_rate))
 
 ## -------------------------------------------------------------------------------------------
 testing$baseline <- testing$pState_popn
-testing$baseline <- ((testing$state_tests * testing$pState_popn) / testing$Tot_pop) * 1e3
+testing$baseline <- ((testing$sTest * testing$pState_popn) / testing$Tot_pop) * 1e3
 print(postResample(pred <- testing$baseline, obs = testing$test_rate))
 
 
