@@ -10,7 +10,7 @@ library(zoo)
 
 ## -----------------------------------------------------------------------------
 ## Read and skim data
-dat <- read.csv("./rawdata/countyTable_timeSeries_v3.csv")
+dat <- read.csv("./rawdata/countyTable_timeSeries_v4.csv")
 skim(dat)
 
 state_popn <- read.csv("./rawdata/state_popn_2019.csv")
@@ -22,42 +22,42 @@ dat <- dat[!is.na(dat$hospitals), ]
 
 ## -----------------------------------------------------------------------------
 ## Remove MA and NV (one county each)
-dat <- dat %>%
-  filter(!state %in% c("MA", "NV"))
+# dat <- dat %>%
+#   filter(!state %in% c("MA", "NV"))
 
 
 ## -----------------------------------------------------------------------------
 ## Remove the IL zero tests
-dat <- dat %>%
-  filter(!(state == "IL" & cTest == 0))
+# dat <- dat %>%
+#   filter(!(state == "IL" & cTest == 0))
 
 ## -----------------------------------------------------------------------------
 ## Drop the 15/16 May from Florida
-dat <- dat %>%
-  filter(!(state == "FL" & date %in% c("2020-05-15", "2020-05-16")))
+# dat <- dat %>%
+#   filter(!(state == "FL" & date %in% c("2020-05-15", "2020-05-16")))
 
 
-## -----------------------------------------------------------------------------
-## For several states the test numbers are cumulative
-## Calculate 'dTest' as the difference between cTest values\
-dat$dTest <- dat$cTest
-fips <- unique(dat$FIPS)
-nfips <- length(fips)
-for (i in 1:nfips) {
-  fipsid <- which(dat$FIPS == fips[i])
-  tmp <- dat[fipsid, ]
-  if (!tmp$state[1] %in% c("NY", "CT", "MI", "WA")) {
-    tmpdTest <- c(0, diff(tmp$cTest))
-    tmpdTest[tmpdTest < 0] <- 0
-    dat$dTest[fipsid] <- tmpdTest
-  }
-}
+# ## -----------------------------------------------------------------------------
+# ## For several states the test numbers are cumulative
+# ## Calculate 'dTest' as the difference between cTest values\
+# dat$dTest <- dat$cTest
+# fips <- unique(dat$FIPS)
+# nfips <- length(fips)
+# for (i in 1:nfips) {
+#   fipsid <- which(dat$FIPS == fips[i])
+#   tmp <- dat[fipsid, ]
+#   if (!tmp$state[1] %in% c("NY", "CT", "MI", "WA")) {
+#     tmpdTest <- c(0, diff(tmp$cTest))
+#     tmpdTest[tmpdTest < 0] <- 0
+#     dat$dTest[fipsid] <- tmpdTest
+#   }
+# }
 
 
 ## -----------------------------------------------------------------------------
 state_test <- dat %>% 
   group_by(state, date) %>%
-  summarize(state_tests = sum(dTest),
+  summarize(state_tests = sum(sTest),
             state_popn = sum(Tot_pop))
 ## Some states have zero tests - remove these
 # state_test$state_tests[state_test$state_tests == 0] <- 10 ## Kludge for missing tests
@@ -81,7 +81,7 @@ dat <- merge(dat, state_test, by = c("state", "date"))
 
 ## -----------------------------------------------------------------------------
 ## Calculate daily test rate
-dat$test_rate <- (dat$dTest / dat$Tot_pop) * 1e3
+dat$test_rate <- (dat$sTest / dat$Tot_pop) * 1e3
 
 ## -----------------------------------------------------------------------------
 ## Calculate other rate data (per 100,000)
@@ -127,7 +127,8 @@ dat$lpBachelor <- log(dat$pBachelor)
 
 
 ## -----------------------------------------------------------------------------
-dat$ddate <- ymd(dat$date)
+# dat$ddate <- ymd(dat$date)
+dat$ddate <- mdy(dat$date)
 dat$wday <- wday(dat$ddate, week_start = 1, label = TRUE)
 
 ## -----------------------------------------------------------------------------
@@ -135,6 +136,8 @@ dat$wday <- wday(dat$ddate, week_start = 1, label = TRUE)
 dat$pcaseNew_lag <- rep(NA, nrow(dat))
 dat$pdeathNew_lag <- rep(NA, nrow(dat))
 mywin = 7 ## previous time steps
+fips <- unique(dat$FIPS)
+nfips <- length(fips)
 for (i in 1:nfips) {
   fipsid <- which(dat$FIPS == fips[i])
   tmp <- dat[fipsid, ]
