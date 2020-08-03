@@ -20,14 +20,14 @@ dat <- dat %>%
 
 dat$ltest_rate <- log(dat$test_rate+1e-5)
 
-dat <- dat %>%
-  filter(state %in% c("CT", "MI", "NY", "WA"))
+# dat <- dat %>%
+#   filter(state %in% c("CT", "MI", "NY", "WA"))
 
 ## -------------------------------------------------------------------------------------------
 f1 <- ltest_rate ~ lpState_popn + lpPop_o_60 + lpPop_m + lpPop_white + 
   lpPop_black + lpPop_AmIndAlNat + lpPop_asia + lpPop_NaHaPaIs +
   lIncome + lpBachelor + phospitals + pnursing + puniversities +
-  pcaseNew_lag + daysSinceC + pdeathNew_lag + daysSinceD + hospRate + wday + sTest + Tot_pop
+  pcaseNew_lag + daysSinceC + pdeathNew_lag + daysSinceD + hospRate + wday # + sTest
 
 # f1 <- test_rate ~ pnursing +
 #   pcaseNew + daysSinceC + pdeathNew + daysSinceD + hospRate
@@ -74,7 +74,7 @@ for (i in 1:nstates) {
   
   ## Get baseline
   # testing$baseline = testing$pState_popn
-  testing$baseline <- ((testing$state_tests * testing$pState_popn) / testing$Tot_pop) * 1e3
+  testing$baseline <- ((testing$sTest * testing$pState_popn) / testing$Tot_pop) * 1e3
   
   modFit <- train(
     f1,
