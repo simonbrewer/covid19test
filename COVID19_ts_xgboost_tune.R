@@ -3,7 +3,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ## ----message = FALSE----------------------------------------------------------
-set.seed(12345)
+set.seed(1234)
 library(dplyr)
 library(skimr)
 library(caret)
@@ -19,8 +19,8 @@ load("./covid19.RData")
 dat <- dat %>%
   filter(!is.na(pcaseNew_lag))
 
-dat <- dat %>%
-  filter(state %in% c("CT", "MI", "NY", "WA"))
+# dat <- dat %>%
+#   filter(state %in% c("CT", "MI", "NY", "WA"))
 
 # dat <- dat[sample(nrow(dat), 5000), ]
 dat$ltest_rate <- log(dat$test_rate+1e-5)
@@ -78,7 +78,7 @@ parGrid <- expand.grid(
 
 
 ## ----results='hide', message=FALSE--------------------------------------------
-modFit <- train(
+modFit1 <- train(
   f1,
   data = training,
   method = "xgbTree",
@@ -90,19 +90,19 @@ modFit <- train(
   ## added:
   trControl = ctrl
 )
-modFit
+modFit1
 
 
 ## -----------------------------------------------------------------------------
-ggplot(modFit)
+ggplot(modFit1)
 
 
 ## -----------------------------------------------------------------------------
 ## Round 2: child weight
 parGrid <- expand.grid(
   nrounds = seq(50, 1000, by = 50),
-  eta = 0.1,
-  max_depth = 2,
+  eta = modFit1$bestTune$eta,
+  max_depth = modFit1$bestTune$max_depth,
   gamma = 0,
   colsample_bytree = 1,
   min_child_weight = c(1, 2, 3, 4),
@@ -110,7 +110,7 @@ parGrid <- expand.grid(
 
 
 ## ----results='hide', message=FALSE--------------------------------------------
-modFit <- train(
+modFit2 <- train(
   f1,
   data = training,
   method = "xgbTree",
@@ -122,28 +122,28 @@ modFit <- train(
   ## added:
   trControl = ctrl
 )
-modFit
+modFit2
 
 
 ## -----------------------------------------------------------------------------
-ggplot(modFit)
+ggplot(modFit2)
 
 
 ## -----------------------------------------------------------------------------
 ## Round 3: row and column sampling
 parGrid <- expand.grid(
   nrounds = seq(50, 1000, by = 50),
-  eta = 0.1,
-  max_depth = 2,
+  eta = modFit1$bestTune$eta,
+  max_depth = modFit1$bestTune$max_depth,
   gamma = 0,
   colsample_bytree = c(0.4, 0.6, 0.8, 1.0),
-  min_child_weight = 1,
+  min_child_weight = modFit2$bestTune$min_child_weight,
   subsample = c(0.5, 0.75, 1.0)
   )
 
 
 ## ----results='hide', message=FALSE--------------------------------------------
-modFit <- train(
+modFit3 <- train(
   f1,
   data = training,
   method = "xgbTree",
@@ -155,28 +155,28 @@ modFit <- train(
   ## added:
   trControl = ctrl
 )
-modFit
+modFit3
 
 
 ## -----------------------------------------------------------------------------
-ggplot(modFit)
+ggplot(modFit3)
 
 
 ## -----------------------------------------------------------------------------
 ## Round 4: gamma
 parGrid <- expand.grid(
   nrounds = seq(50, 1000, by = 50),
-  eta = 0.1,
-  max_depth = 2,
+  eta = modFit1$bestTune$eta,
+  max_depth = modFit1$bestTune$max_depth,
   gamma = c(0, 0.05, 0.1, 0.5, 0.7, 0.9, 1.0),
-  colsample_bytree = 0.6,
-  min_child_weight = 1,
-  subsample = 1.0
+  colsample_bytree = modFit3$bestTune$colsample_bytree,
+  min_child_weight = modFit2$bestTune$min_child_weight,
+  subsample = modFit3$bestTune$subsample
   )
 
 
 ## ----results='hide', message=FALSE--------------------------------------------
-modFit <- train(
+modFit4 <- train(
   f1,
   data = training,
   method = "xgbTree",
@@ -188,29 +188,29 @@ modFit <- train(
   ## added:
   trControl = ctrl
 )
-modFit
+modFit4
 
 
 ## -----------------------------------------------------------------------------
-ggplot(modFit)
+ggplot(modFit4)
 
 
 ## -----------------------------------------------------------------------------
 ## Round 5: learning rate
 parGrid <- expand.grid(
-  nrounds = seq(100, 10000, by = 100), 
-  # eta = c(0.01, 0.015, 0.025, 0.05, 0.1), 
-  eta = 0.05,
-  max_depth = 2, 
-  gamma = 0.1, 
-  colsample_bytree = 0.6, 
-  min_child_weight = 1,
-  subsample = 1.0
-  )
+  nrounds = seq(100, 2000, by = 100), 
+  # eta = c(0.01, 0.015, 0.025, 0.05, 0.1),
+  eta = 0.025,
+  max_depth = modFit1$bestTune$max_depth,
+  gamma = modFit4$bestTune$gamma, 
+  colsample_bytree = modFit3$bestTune$colsample_bytree,
+  min_child_weight = modFit2$bestTune$min_child_weight,
+  subsample = modFit3$bestTune$subsample
+)
 
 
 ## ----results='hide', message=FALSE--------------------------------------------
-modFit <- train(
+modFit5 <- train(
   f1,
   data = training,
   method = "xgbTree",
@@ -222,19 +222,19 @@ modFit <- train(
   ## added:
   trControl = ctrl
 )
-modFit
+modFit5
 
 
 ## -----------------------------------------------------------------------------
-ggplot(modFit)
+ggplot(modFit5)
 
 
 ## -----------------------------------------------------------------------------
-plot(varImp(modFit))
+plot(varImp(modFit5))
 
 
 ## -----------------------------------------------------------------------------
-pred_test <- predict(modFit, newdata = testing)
+pred_test <- predict(modFit5, newdata = testing)
 # mod_results[mod_id, 2:4] <- postResample(pred = pred_test, obs = testing$test_rate)
 postResample(pred = exp(pred_test), obs = testing$test_rate)
 
@@ -253,5 +253,5 @@ p1 = ggscatter(mydf, x = "obs", y = "pred", col = "type",
   geom_abline()
 print(p1)
 
-ggsave("COVID19_xgboost_cv.pdf", p1)
+ggsave("./results/COVID19_xgboost_cv.pdf", p1)
 
