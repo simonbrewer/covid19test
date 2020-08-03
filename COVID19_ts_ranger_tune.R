@@ -121,4 +121,4 @@ p1 = ggscatter(mydf, x = "obs", y = "pred", col = "type",
   geom_abline()
 print(p1)
 
-ggsave("COVID19_ranger_cv.pdf", p1)
+ggsave("./results/COVID19_ranger_cv.pdf", p1)
