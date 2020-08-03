@@ -81,7 +81,7 @@ dat <- merge(dat, state_test, by = c("state", "date"))
 
 ## -----------------------------------------------------------------------------
 ## Calculate daily test rate
-dat$test_rate <- (dat$sTest / dat$Tot_pop) * 1e3
+dat$test_rate <- (dat$cTest / dat$Tot_pop) * 1e3
 
 ## -----------------------------------------------------------------------------
 ## Calculate other rate data (per 100,000)
