@@ -26,7 +26,7 @@ library(ggpubr)
 # dat = read.csv("countyTable_timeSeries_v3.csv")
 load("../covid19.RData")
 skim(dat)
-dat$date = ymd(dat$date)
+dat$date = mdy(dat$date)
 dat$FIPS = as.factor(dat$FIPS)
 ```
 
@@ -42,12 +42,13 @@ for (i in states) {
     ggline(x = "date", y = "cTest", col = "FIPS",
            main = paste("COVID tests (raw)", i),
            legend = "none")
-  p2 = dat %>% 
-    filter(dat$state == i) %>%
-    ggline(x = "date", y = "dTest", col = "FIPS",
-           main = paste("COVID tests (daily)", i),
-           legend = "none")
-  print(ggarrange(p1, p2))
+  print(p1)
+  # p2 = dat %>% 
+  #   filter(dat$state == i) %>%
+  #   ggline(x = "date", y = "dTest", col = "FIPS",
+  #          main = paste("COVID tests (daily)", i),
+  #          legend = "none")
+  # print(ggarrange(p1, p2))
 }
 ```
 }
