@@ -81,7 +81,8 @@ modFit <- train(
   method = "nnet",
   ## Center and scale the predictors for the training
   ## set and all future samples.
-  preProc = c("center", "scale"),
+  # preProc = c("center", "scale"),
+  preProc = c("range"),
   ## increase parameter set
   tuneGrid = parGrid,
   ## added:
