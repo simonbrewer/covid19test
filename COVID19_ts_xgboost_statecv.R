@@ -3,7 +3,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ## ----message = FALSE------------------------------------------------------------------------
-set.seed(12345)
+set.seed(1234)
 library(dplyr)
 library(skimr)
 library(caret)
@@ -17,7 +17,7 @@ load("./covid19.RData")
 
 ## -------------------------------------------------------------------------------------------
 f1 <- test_rate ~ lpState_popn + lpPop_o_60 + lpPop_m + lpPop_white + 
-  # lpPop_black + lpPop_AmIndAlNat + lpPop_asia + lpPop_NaHaPaIs + 
+  lpPop_black + lpPop_AmIndAlNat + lpPop_asia + lpPop_NaHaPaIs +
   lIncome + lpBachelor + phospitals + pnursing + puniversities +
   pcaseNew + daysSinceC + pdeathNew + daysSinceD + hospRate
 
@@ -56,9 +56,9 @@ parGrid <- expand.grid(
   nrounds = 800, 
   eta = 0.05, 
   max_depth = 3, 
-  gamma = 0, 
-  colsample_bytree = 1.0, 
-  min_child_weight = 3,
+  gamma = 0.0, 
+  colsample_bytree = 0.6, 
+  min_child_weight = 2,
   subsample = 1.0
 )
 
@@ -70,7 +70,8 @@ for (i in 1:nstates) {
   testing =  dat[ state_id,]
   
   ## Get baseline
-  testing$baseline = testing$pState_popn
+  # testing$baseline = testing$pState_popn
+  testing$baseline <- ((testing$sTest * testing$pState_popn) / testing$Tot_pop) * 1e3
   
   modFit <- train(
     f1,
@@ -104,7 +105,7 @@ for (i in 1:nstates) {
   p1 = ggscatter(mydf, x = "obs", y = "pred", col = "type", 
             main = paste0("COVID 19 testing (",states[i],", raw-scale)")) + 
     geom_abline()
-  ggsave(file = paste0("./statecv/xgboost/plots/covid_",states[i],"_ranger.png"), 
+  ggsave(file = paste0("./statecv/xgboost/covid_",states[i],"_ranger.png"), 
          p1, device = "png")
 }
 

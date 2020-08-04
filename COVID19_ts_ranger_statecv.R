@@ -3,7 +3,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ## ----message = FALSE------------------------------------------------------------------------
-set.seed(12345)
+set.seed(1234)
 library(dplyr)
 library(skimr)
 library(caret)
