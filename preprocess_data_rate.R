@@ -10,7 +10,7 @@ library(zoo)
 
 ## -----------------------------------------------------------------------------
 ## Read and skim data
-dat <- read.csv("./rawdata/countyTable_timeSeries_v4.csv")
+dat <- read.csv("./rawdata/countyTable_timeSeries_v5.csv")
 skim(dat)
 
 state_popn <- read.csv("./rawdata/state_popn_2019.csv")
