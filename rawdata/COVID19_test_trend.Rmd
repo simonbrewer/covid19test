@@ -4,8 +4,6 @@ author: "Simon Brewer"
 date: "7/24/2020"
 output:
   html_document:
-    toc: true
-    toc_float: true
     fig_caption: true
 ---
 
@@ -25,7 +23,7 @@ library(ggpubr)
 ```{r}
 # dat = read.csv("countyTable_timeSeries_v3.csv")
 load("../covid19.RData")
-skim(dat)
+# skim(dat)
 dat$date = mdy(dat$date)
 dat$FIPS = as.factor(dat$FIPS)
 ```
@@ -37,8 +35,20 @@ states = unique(dat$state)
 for (i in states) {
   print(i)
   
-  p1 = dat %>% 
-    filter(dat$state == i) %>%
+  dat.state = dat %>% 
+    filter(dat$state == i)
+
+  dat.state$FIPS <- droplevels(dat.state$FIPS)
+  
+  # print(skim(dat.state))
+  
+  knitr::kable(table(dat.state$FIPS))
+  
+  print("Date range")
+  print(min(dat.state$date))
+  print(max(dat.state$date))
+  
+  p1 = dat.state %>%
     ggline(x = "date", y = "cTest", col = "FIPS",
            main = paste("COVID tests (raw)", i),
            legend = "none")
@@ -53,69 +63,3 @@ for (i in states) {
 ```
 }
 
-## Cases
-
-Raw case load
-```{r}
-states = unique(dat$state)
-for (i in states) {
-  print(i)
-  
-  p1 = dat %>% 
-    filter(dat$state == i) %>%
-    ggline(x = "date", y = "caseNew", col = "FIPS",
-           main = paste("COVID cases", i),
-           legend = "none")
-  print(p1)
-}
-```
-}
-
-7-day smoothed case load
-```{r}
-states = unique(dat$state)
-for (i in states) {
-  print(i)
-  
-  p1 = dat %>% 
-    filter(dat$state == i) %>%
-    ggline(x = "date", y = "pcaseNew_lag", col = "FIPS",
-           main = paste("COVID cases", i),
-           legend = "none")
-  print(p1)
-}
-```
-}
-
-## Deaths
-
-Raw death numbers
-```{r}
-states = unique(dat$state)
-for (i in states) {
-  print(i)
-  
-  p1 = dat %>% 
-    filter(dat$state == i) %>%
-    ggline(x = "date", y = "deathNew", col = "FIPS",
-           main = paste("COVID deaths", i),
-           legend = "none")
-  print(p1)
-}
-```
-}
-
-7-day smoothed death rate
-```{r}
-states = unique(dat$state)
-for (i in states) {
-  print(i)
-  
-  p1 = dat %>% 
-    filter(dat$state == i) %>%
-    ggline(x = "date", y = "pcaseNew_lag", col = "FIPS",
-           main = paste("COVID cases", i),
-           legend = "none")
-  print(p1)
-}
-```
