@@ -166,5 +166,8 @@ for (i in 1:nfips) {
 #                    horizons = 1, groups = "FIPS",
 #                    dates = dat$ddate)
 
+## Remove CA spike
+dat <- dat %>% filter(cTest < 280000)
+
 save(dat, file = "covid19.RData")
 
