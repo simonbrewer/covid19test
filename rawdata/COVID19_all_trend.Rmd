@@ -26,7 +26,8 @@ library(ggpubr)
 # dat = read.csv("countyTable_timeSeries_v3.csv")
 load("../covid19.RData")
 skim(dat)
-dat$date = mdy(dat$date)
+dat$date = ymd(dat$date)
+# dat$date = mdy(dat$date)
 dat$FIPS = as.factor(dat$FIPS)
 ```
 
