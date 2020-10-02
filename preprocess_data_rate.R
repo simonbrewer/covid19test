@@ -10,7 +10,7 @@ library(zoo)
 
 ## -----------------------------------------------------------------------------
 ## Read and skim data
-dat <- read.csv("./rawdata/countyTable_timeSeries_v5.csv")
+dat <- read.csv("./rawdata/countyTable_timeSeries_v6.csv")
 skim(dat)
 
 state_popn <- read.csv("./rawdata/state_popn_2019.csv")
@@ -127,8 +127,8 @@ dat$lpBachelor <- log(dat$pBachelor)
 
 
 ## -----------------------------------------------------------------------------
-# dat$ddate <- ymd(dat$date)
-dat$ddate <- mdy(dat$date)
+dat$ddate <- ymd(dat$date)
+# dat$ddate <- mdy(dat$date)
 dat$wday <- wday(dat$ddate, week_start = 1, label = TRUE)
 
 ## -----------------------------------------------------------------------------
