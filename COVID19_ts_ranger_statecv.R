@@ -62,8 +62,7 @@ base_results <- data.frame(states,
 
 
 ## -------------------------------------------------------------------------------------------
-parGrid = expand.grid(mtry = 5, splitrule = "variance", min.node.size = 6)
-
+parGrid = expand.grid(mtry = 6, splitrule = "variance", min.node.size = 4)
 
 ## -------------------------------------------------------------------------------------------
 for (i in 1:nstates) {
@@ -71,6 +70,12 @@ for (i in 1:nstates) {
   state_id = which(dat$state == states[i])
   training = dat[-state_id,]
   testing =  dat[ state_id,]
+  
+  ltr_hist <- hist(training$ltest_rate, plot = FALSE,
+                   seq(min(training$ltest_rate), max(training$ltest_rate), length.out = 100))
+  wgt_vec <- 1 / ltr_hist$counts
+  casewgt <- wgt_vec[cut(training$ltest_rate, include.lowest = TRUE,
+                         breaks = ltr_hist$breaks, labels = FALSE)]
   
   ## Get baseline
   # testing$baseline = testing$pState_popn
@@ -86,6 +91,8 @@ for (i in 1:nstates) {
     ## increase parameter set
     tuneGrid = parGrid,
     ## added:
+    num.trees = 250,
+    weights = casewgt,
     # importance = 'permutation',
     trControl = ctrl)
   
